@@ -1,8 +1,9 @@
-package com.example.tasklist
+package com.example.tasklist.data
 
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
+import com.example.tasklist.utils.DatabaseManager
 
 class TaskDAO(context: Context) {
 
