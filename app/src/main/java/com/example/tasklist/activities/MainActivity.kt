@@ -1,22 +1,23 @@
 package com.example.tasklist.activities
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tasklist.R
-import com.example.tasklist.data.Task
 import com.example.tasklist.adapters.TaskAdapter
+import com.example.tasklist.data.Task
 import com.example.tasklist.data.TaskDAO
 import com.example.tasklist.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
-
 
     lateinit var taskDAO: TaskDAO
     lateinit var taskList: List<Task>
@@ -38,9 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         taskDAO = TaskDAO(this)
 
-        adapter = TaskAdapter(emptyList()) {
-
-        }
+        adapter = TaskAdapter(emptyList(),::editTask, ::deleteTask)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -53,8 +52,34 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        refreshData()
+    }
+
+    fun refreshData() {
         taskList = taskDAO.findAll()
         adapter.updateItems(taskList)
     }
 
+    fun editTask(position: Int) {
+        val task = taskList[position]
+
+        val intent = Intent(this, TaskActivity::class.java)
+        intent.putExtra(TaskActivity.TASK_ID, task.id)
+        startActivity(intent)
+    }
+
+    fun deleteTask(position: Int) {
+        val task = taskList[position]
+
+        AlertDialog.Builder(this)
+            .setTitle("Delete task")
+            .setMessage("Are you sure you want to delete this task?")
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                taskDAO.delete(task)
+                refreshData()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .setCancelable(false)
+            .show()
+    }
 }

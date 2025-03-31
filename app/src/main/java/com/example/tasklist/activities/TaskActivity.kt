@@ -12,9 +12,14 @@ import com.example.tasklist.databinding.ActivityTaskBinding
 
 class TaskActivity : AppCompatActivity() {
 
+    companion object {
+        const val TASK_ID = "TASK_ID"
+    }
+
     lateinit var binding: ActivityTaskBinding
 
     lateinit var taskDAO: TaskDAO
+    lateinit var task: Task
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
